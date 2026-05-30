@@ -1,0 +1,216 @@
+# ==============================================================================
+# Market Microstructure & Order Flow Analytics Engine
+# Centralized Configuration
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Symbols: NSE instruments to analyze
+# ------------------------------------------------------------------------------
+symbols:
+  index_futures:
+    - NIFTY_FUT
+
+  fo_stocks:
+    - RELIANCE
+    - TCS
+    - HDFCBANK
+    - INFY
+    - ICICIBANK
+    - HINDUNILVR
+    - SBIN
+    - BHARTIARTL
+    - KOTAKBANK
+    - ITC
+    - LT
+    - AXISBANK
+    - WIPRO
+    - BAJFINANCE
+    - TATAMOTORS
+    - MARUTI
+    - SUNPHARMA
+    - TATASTEEL
+    - POWERGRID
+    - ADANIENT
+
+# ------------------------------------------------------------------------------
+# Simulation: Data generation parameters
+# ------------------------------------------------------------------------------
+simulation:
+  num_days: 5
+  snapshot_interval_ms: 100
+  trading_hours:
+    start: "09:15:00"
+    end: "15:30:00"
+  random_seed: 42
+  num_order_book_levels: 5
+  tick_size: 0.05
+  lot_size: 1
+
+# ------------------------------------------------------------------------------
+# Hawkes Process Parameters: Self-exciting point process calibration
+# Each event type has its own intensity dynamics
+# λ(t) = μ + Σ α × exp(-ω × (t - t_i))
+# ------------------------------------------------------------------------------
+hawkes_params:
+  trade_arrivals:
+    mu: 5.0           # Baseline intensity (events/second)
+    alpha: 0.8         # Excitation magnitude
+    omega: 1.2         # Decay rate (1/second)
+
+  order_submissions:
+    mu: 15.0
+    alpha: 1.5
+    omega: 2.0
+
+  cancellations:
+    mu: 10.0
+    alpha: 1.0
+    omega: 1.5
+
+  modifications:
+    mu: 3.0
+    alpha: 0.5
+    omega: 1.0
+
+  cross_excitation:
+    trade_to_cancel: 0.3
+    trade_to_submit: 0.5
+    cancel_to_submit: 0.2
+
+# ------------------------------------------------------------------------------
+# Metrics: Analysis parameters
+# ------------------------------------------------------------------------------
+metrics:
+  rolling_windows:
+    short: 50          # Short-term rolling window (ticks)
+    medium: 200        # Medium-term rolling window (ticks)
+    long: 1000         # Long-term rolling window (ticks)
+
+  spread_analysis:
+    intervals:
+      - 1              # 1-second intervals
+      - 5              # 5-second intervals
+      - 30             # 30-second intervals
+      - 300            # 5-minute intervals
+    realized_spread_delay_ms: 5000  # Delay for realized spread (5s)
+
+  order_imbalance:
+    depth_levels: 5
+    weighting: "exponential"   # exponential, linear, equal
+    decay_factor: 0.5
+
+  trade_classification:
+    method: "lee_ready"        # lee_ready, tick_test, bvc
+    quote_delay_ms: 0          # Quote timestamp adjustment
+
+  adverse_selection:
+    pin:
+      estimation_window: 390    # Minutes per trading day
+      optimization_method: "L-BFGS-B"
+      num_initial_points: 10
+    kyle_lambda:
+      regression_window: 100    # Number of trades
+      min_observations: 50
+    vpin:
+      bucket_size: 50           # Volume bucket size
+      num_buckets: 50           # Number of buckets for estimation
+
+  price_impact:
+    amihud_window: 390          # Daily window (minutes)
+    impact_horizons:
+      - 1                       # 1-trade ahead
+      - 5                       # 5-trades ahead
+      - 10                      # 10-trades ahead
+      - 50                      # 50-trades ahead
+
+  queue_decay:
+    survival_method: "kaplan_meier"
+    parametric_model: "exponential"
+    price_levels_analyzed: 3
+    min_queue_size: 10
+
+  hawkes_estimation:
+    method: "mle"               # mle, em, spectral
+    kernel: "exponential"
+    time_resolution_ms: 1
+    max_iterations: 1000
+    convergence_tol: 1.0e-06
+
+# ------------------------------------------------------------------------------
+# Signals: Composite signal construction
+# ------------------------------------------------------------------------------
+signals:
+  composite_weights:
+    spread_signal: 0.15
+    obi_signal: 0.25
+    kyle_lambda: 0.20
+    pin_signal: 0.15
+    hawkes_intensity: 0.15
+    queue_decay: 0.10
+
+  thresholds:
+    entry_long: 0.6
+    entry_short: -0.6
+    exit_long: 0.1
+    exit_short: -0.1
+    max_position_size: 1.0
+
+  calibration:
+    method: "walk_forward"
+    train_window_days: 20
+    test_window_days: 5
+    optimization_metric: "sharpe_ratio"
+    min_trades_per_window: 30
+    weight_bounds:
+      min: 0.05
+      max: 0.40
+
+  normalization:
+    method: "z_score"           # z_score, min_max, percentile
+    lookback_period: 200
+
+# ------------------------------------------------------------------------------
+# Backtest: Walk-forward backtesting configuration
+# ------------------------------------------------------------------------------
+backtest:
+  initial_capital: 10000000     # ₹1 Crore
+  transaction_cost_bps: 5       # 5 basis points per trade
+  slippage_bps: 2               # 2 basis points slippage estimate
+  risk_free_rate: 0.065         # 6.5% (Indian T-bill rate)
+  max_leverage: 1.0
+  position_sizing: "fixed"      # fixed, volatility_scaled, kelly
+
+  walk_forward:
+    train_window_days: 20
+    test_window_days: 5
+    refit_frequency_days: 5
+    min_history_days: 10
+
+  risk_management:
+    max_drawdown_pct: 15.0
+    daily_loss_limit_pct: 3.0
+    position_timeout_minutes: 120
+    stop_loss_pct: 2.0
+    take_profit_pct: 4.0
+
+  performance_metrics:
+    - sharpe_ratio
+    - sortino_ratio
+    - calmar_ratio
+    - max_drawdown
+    - win_rate
+    - profit_factor
+    - avg_trade_duration
+    - total_return
+
+# ------------------------------------------------------------------------------
+# Paths: Directory structure
+# ------------------------------------------------------------------------------
+paths:
+  data_raw: "data/raw"
+  data_processed: "data/processed"
+  data_signals: "data/signals"
+  reports_figures: "reports/figures"
+  config: "config"
+  r_scripts: "R"
+  python_scripts: "python"

@@ -1,0 +1,163 @@
+# ==============================================================================
+# Market Microstructure & Order Flow Analytics Engine
+# GitHub Actions CI Pipeline
+# ==============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ----------------------------------------------------------------------------
+  # Python Linting with flake8
+  # ----------------------------------------------------------------------------
+  python-lint:
+    name: Python Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-lint-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-lint-
+            ${{ runner.os }}-pip-
+
+      - name: Install flake8
+        run: pip install flake8
+
+      - name: Run flake8 on python/
+        run: |
+          flake8 python/ \
+            --max-line-length=120 \
+            --extend-ignore=E203,W503 \
+            --statistics \
+            --count \
+            --show-source
+
+  # ----------------------------------------------------------------------------
+  # Python Tests with pytest
+  # ----------------------------------------------------------------------------
+  python-test:
+    name: Python Tests
+    runs-on: ubuntu-latest
+    needs: python-lint
+
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Create required directories
+        run: |
+          mkdir -p data/raw data/processed data/signals reports/figures
+
+      - name: Run tests
+        run: |
+          pytest tests/ \
+            --verbose \
+            --tb=short \
+            --cov=python \
+            --cov-report=term-missing \
+            --cov-fail-under=0
+
+  # ----------------------------------------------------------------------------
+  # R Script Syntax Check
+  # ----------------------------------------------------------------------------
+  r-check:
+    name: R Syntax Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.3"
+
+      - name: Cache R packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-r-4.3-${{ hashFiles('R/*.R') }}
+          restore-keys: |
+            ${{ runner.os }}-r-4.3-
+
+      - name: Install R dependencies
+        run: |
+          install.packages(c("yaml"), repos = "https://cran.r-project.org")
+        shell: Rscript {0}
+
+      - name: Check R script syntax
+        run: |
+          r_files <- list.files("R/", pattern = "\\.R$", full.names = TRUE)
+          errors <- character(0)
+          for (f in r_files) {
+            tryCatch(
+              {
+                parse(file = f)
+                message(paste("✓", basename(f), "- syntax OK"))
+              },
+              error = function(e) {
+                errors <<- c(errors, paste("✗", basename(f), "-", e$message))
+                message(paste("✗", basename(f), "-", e$message))
+              }
+            )
+          }
+          if (length(errors) > 0) {
+            stop(paste("Syntax errors found in", length(errors), "file(s)"))
+          } else {
+            message(paste("\nAll", length(r_files), "R scripts passed syntax check"))
+          }
+        shell: Rscript {0}
+
+      - name: Validate config
+        run: |
+          config <- yaml::read_yaml("config/settings.yaml")
+          required_keys <- c("symbols", "simulation", "hawkes_params",
+                           "metrics", "signals", "backtest", "paths")
+          missing <- setdiff(required_keys, names(config))
+          if (length(missing) > 0) {
+            stop(paste("Missing config keys:", paste(missing, collapse = ", ")))
+          }
+          message("✓ config/settings.yaml - all required keys present")
+        shell: Rscript {0}

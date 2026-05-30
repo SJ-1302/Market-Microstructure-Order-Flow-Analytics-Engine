@@ -1,0 +1,24 @@
+# ==============================================================================
+# Market Microstructure & Order Flow Analytics Engine
+# Python Dependencies
+# ==============================================================================
+
+# Core numerical computing
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+
+# Data I/O (Parquet interop with R)
+pyarrow>=12.0.0
+
+# Configuration
+PyYAML>=6.0
+
+# Progress bars for data generation
+tqdm>=4.65.0
+
+# Signal classification & threshold tuning
+scikit-learn>=1.3.0
+
+# Diagnostic visualizations
+matplotlib>=3.7.0

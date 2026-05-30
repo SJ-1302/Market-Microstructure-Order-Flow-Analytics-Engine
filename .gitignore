@@ -1,0 +1,95 @@
+# ==============================================================================
+# Market Microstructure & Order Flow Analytics Engine
+# .gitignore
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Python
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+.env
+*.whl
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ------------------------------------------------------------------------------
+# R
+# ------------------------------------------------------------------------------
+.Rhistory
+.Rdata
+.RData
+.Ruserdata
+.Rproj.user/
+*.Rproj
+renv/library/
+renv/python/
+renv/staging/
+renv/local/
+.Rprofile
+
+# ------------------------------------------------------------------------------
+# Data (keep .gitkeep files)
+# ------------------------------------------------------------------------------
+data/raw/*.csv
+data/raw/*.parquet
+data/processed/*.csv
+data/processed/*.parquet
+data/signals/*.csv
+data/signals/*.parquet
+
+# ------------------------------------------------------------------------------
+# Reports & Figures (keep .gitkeep files)
+# ------------------------------------------------------------------------------
+reports/figures/*.png
+reports/figures/*.pdf
+reports/figures/*.html
+reports/figures/*.svg
+
+# ------------------------------------------------------------------------------
+# IDE & Editors
+# ------------------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+.spyderproject
+.spyproject
+
+# ------------------------------------------------------------------------------
+# OS Files
+# ------------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ------------------------------------------------------------------------------
+# Logs & Miscellaneous
+# ------------------------------------------------------------------------------
+*.log
+*.tmp
+*.bak
+*.cache
+.ipynb_checkpoints/
+*.ipynb_checkpoints
