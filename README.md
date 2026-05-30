@@ -1,28 +1,7 @@
 <p align="center">
-  <h1 align="center">📊 Market Microstructure & Order Flow Analytics Engine</h1>
+  <h1 align="center"> Market Microstructure & Order Flow Analytics Engine</h1>
 </p>
 
-<p align="center">
-  <strong>Tick-by-tick order book analysis pipeline quantifying microstructure dynamics across NSE instruments</strong>
-</p>
-
-<p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/R-4.3%2B-276DC3?style=for-the-badge&logo=r&logoColor=white" alt="R 4.3+"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10+"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
-  <a href="#contributing"><img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=for-the-badge" alt="PRs Welcome"></a>
-</p>
-
-<p align="center">
-  <a href="#key-results">Key Results</a> •
-  <a href="#features">Features</a> •
-  <a href="#quick-start">Quick Start</a> •
-  <a href="#usage">Usage</a> •
-  <a href="#methodology">Methodology</a> •
-  <a href="#project-structure">Project Structure</a>
-</p>
-
----
 
 ## Overview
 
@@ -83,17 +62,17 @@ graph LR
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                        PIPELINE ORCHESTRATION                          │
-│                                                                        │
-│  ┌──────────┐   ┌──────────────┐   ┌──────────────┐   ┌────────────┐  │
-│  │  DATA     │──▶│  ANALYSIS    │──▶│   SIGNALS    │──▶│  BACKTEST  │  │
-│  │  GEN      │   │  (R Scripts) │   │  (Python)    │   │  (R)       │  │
-│  │  (Python) │   │  01..08      │   │  composite   │   │  walk-fwd  │  │
-│  └──────────┘   └──────────────┘   └──────────────┘   └────────────┘  │
-│       │                │                   │                │          │
-│       ▼                ▼                   ▼                ▼          │
-│   data/raw/       data/processed/     data/signals/    reports/       │
-│   *.parquet       *.csv               *.csv            figures/       │
+│                        PIPELINE ORCHESTRATION                           │
+│                                                                         │
+│  ┌──────────┐   ┌──────────────┐   ┌──────────────┐   ┌────────────┐    │
+│  │  DATA    │──▶│  ANALYSIS    │──▶│   SIGNALS   │──▶│  BACKTEST │    │
+│  │  GEN     │   │  (R Scripts) │   │  (Python)    │   │  (R)       │    │
+│  │ (Python) │   │  01..08      │   │  composite   │   │  walk-fwd  │    │
+│  └──────────┘   └──────────────┘   └──────────────┘   └────────────┘    │
+│       │                │                   │                │           │
+│       ▼                ▼                   ▼                ▼           │
+│   data/raw/       data/processed/     data/signals/    reports/         │
+│   *.parquet       *.csv               *.csv            figures/         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -118,55 +97,55 @@ graph LR
 
 ## Features
 
-### 📈 Spread Analytics
+###  Spread Analytics
 - Quoted spread, effective spread, realized spread decomposition
 - Time-weighted average spread (TWAS) across configurable intervals
 - Spread component analysis: adverse selection vs. inventory vs. order processing
 - Intraday spread seasonality patterns
 
-### 📊 Order Book Imbalance
+###  Order Book Imbalance
 - Volume-weighted order imbalance (OI) at best bid/ask
 - Multi-level book imbalance with depth weighting
 - Normalized book pressure metrics across top-N levels
 - Imbalance momentum and mean-reversion signals
 
-### ⚡ Trade Flow Analytics
+###  Trade Flow Analytics
 - Lee-Ready trade classification algorithm
 - Trade-to-Quote Ratio (TQR) as HFT activity proxy
 - Volume-synchronized probability of informed trading (VPIN)
 - Bulk volume classification for large trade detection
 
-### 🧮 Adverse Selection Models
+###  Adverse Selection Models
 - **Kyle's Lambda (λ)**: Price impact coefficient from Kyle (1985)
 - **PIN Model**: Probability of Informed Trading — Easley & O'Hara (1992, 1996)
 - **VPIN**: Volume-synchronized PIN — Easley, López de Prado & O'Hara (2012)
 - Intraday adverse selection regime detection
 
-### 💥 Price Impact Analysis
+###  Price Impact Analysis
 - Amihud (2002) illiquidity ratio
 - Temporary vs. permanent price impact decomposition
 - Non-linear impact modeling (square-root law)
 - Cross-instrument impact correlation
 
-### 📉 Queue Position & Decay
+###  Queue Position & Decay
 - Order survival analysis at each price level
 - Exponential decay parameter estimation
 - Queue priority value quantification
 - Cancel/fill probability curves
 
-### 🔥 Hawkes Process Intensity
+###  Hawkes Process Intensity
 - Self-exciting point process estimation for trade arrivals
 - Branching ratio and half-life calibration
 - Multi-variate Hawkes for cross-instrument contagion
 - Event clustering detection for volatility forecasting
 
-### 🎯 Signal Generation & Calibration
+###  Signal Generation & Calibration
 - Multi-factor composite signal with optimized weights
 - Walk-forward adaptive threshold calibration
 - Entry/exit rule generation with risk management
 - Sharpe-maximizing parameter optimization
 
-### 🔄 Backtesting Engine
+###  Backtesting Engine
 - Event-driven walk-forward backtester
 - Transaction cost modeling with configurable slippage
 - Comprehensive performance analytics (Sharpe, Sortino, Calmar, etc.)
@@ -756,12 +735,6 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 ---
 
-<p align="center">
-  <sub>Built with ❤️ for quantitative finance research</sub>
-</p>
 
-<p align="center">
-  <a href="https://github.com/yourusername/market-microstructure-engine">
-    <img src="https://img.shields.io/badge/⭐_Star_this_repo-if_you_find_it_useful-yellow?style=for-the-badge" alt="Star this repo">
-  </a>
-</p>
+
+
