@@ -11,6 +11,7 @@ even on environments without a local R installation.
 from __future__ import annotations
 
 import os
+from typing import Tuple
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
