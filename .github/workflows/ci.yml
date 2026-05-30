@@ -90,6 +90,8 @@ jobs:
           mkdir -p data/raw data/processed data/signals reports/figures
 
       - name: Run tests
+        env:
+          PYTHONPATH: .
         run: |
           pytest tests/ \
             --verbose \
